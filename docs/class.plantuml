@@ -1,0 +1,69 @@
+@startuml
+
+' top to bottom direction
+left to right direction
+
+' skinparam linetype ortho
+skinparam arrowThickness 2
+skinparam groupInheritance 2
+
+abstract class BaseEntity{
+    hash_concistent_id: String
+    criado_at: Date
+    criado_by: Usuario
+    criado_with: Module
+    atualizado_at: Date
+    atualizado_by: Usuario
+    atualizado_with: Module
+    exluido: boolean
+
+}
+
+class Acesso {
+    clientId: string
+    clientSecret: string
+    permissoes: List<Permissao>
+    organizacao: Organizacao
+}
+
+class Usuario {
+    nome: String
+    cpf: string
+    acesso: Acesso
+    conta: Conta
+}
+
+class Permissao {
+    nome: string
+    descrição: string
+}
+
+class Conta {
+    saldo: BigInteger
+    extrato: List<Transacao>
+}
+
+class Transacao {
+    data: Date
+    estado: EstadoEnum
+}
+
+class PedidoTransacao{
+    contaDevedor: Conta
+    contaCredor: Conta
+    devedor: Usuario
+    credor: Usuario
+    valorTransferencia: BigInt
+    descricao: string
+    data: Date
+    transacaoAgendada: Date
+    dataAgendamento: Date
+    estado: EstadoTransacaoEnum
+}
+enum EstadoTransacaoEnum {
+    PENDENTE
+    CONCLUIDO
+    FALHO
+}
+
+@enduml
