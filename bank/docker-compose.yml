@@ -1,0 +1,59 @@
+services:
+  scalebank_mongodb:
+    image: 'mongo:7.0-rc-jammy'
+    environment:
+      - 'MONGO_INITDB_DATABASE=mydatabase'
+      - 'MONGO_INITDB_ROOT_PASSWORD=secret'
+      - 'MONGO_INITDB_ROOT_USERNAME=root'
+    ports:
+      - '27017'
+    networks:
+      - scalebank_network
+  scalebank_postgres:
+    image: 'postgres:16.1-alpine'
+    environment:
+      - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_PASSWORD=secret'
+      - 'POSTGRES_USER=myuser'
+    ports:
+      - '5432'
+    networks:
+      - scalebank_network
+    volumes:
+      - scalebank_postgres:/var/lib/postgresql
+      - scalebank_postgres_data:/var/lib/postgresql/data
+
+  scalebank_rabbitmq:
+    image: 'rabbitmq:3.11-alpine'
+    environment:
+      - 'RABBITMQ_DEFAULT_PASS=secret'
+      - 'RABBITMQ_DEFAULT_USER=myuser'
+    ports:
+      - '5672'
+    networks:
+      - scalebank_network
+  scalebank_redis:
+    image: 'redis:7.2.3-alpine3.19'
+    ports:
+      - '6379'
+    networks:
+      - scalebank_network
+
+  bank:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - scalebank_mongodb
+      - scalebank_postgres
+      - scalebank_rabbitmq
+      - scalebank_redis
+    networks:
+      - scalebank_network
+
+networks:
+  scalebank_network:
+
+volumes:
+  scalebank_postgres:
+  scalebank_postgres_data:
